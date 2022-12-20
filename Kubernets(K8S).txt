@@ -1,0 +1,139 @@
+Kubernetes
+
+# install 1 Master Ec2 instance (t2.medium) & 2 worker nodes (t2.micro)
+
+Step 1:
+
+Install Docker :-
+
+$ sudo apt-get update
+$ sudo apt-get install docker.io
+$docker --version
+$ sudo usermod -aG docker $USER
+$ sudo systemctl start docker
+$sudo systemctl enable docker 
+
+=====================================================
+
+step2 :
+
+Install Kubernetes
+
+# install curl
+$ sudo apt install curl
+
+#add the GPG kubernetes key with command 
+
+$ curl -s https://packages.cloud.google.com/apt/doc/apt-key.gpg | sudo apt-key add
+
+$ sudo apt-add-repository "deb http://apt.kubernetes.io/ kubernetes-xenial main"
+
+$ sudo apt-get install kubeadm kubelet kubectl kubernetes-cni
+
+$ sudo apt-mark hold kubeadm kubelet kubectl kubernetes-cni
+
+$ kubeadm version
+
+$ sudo swapoff –-a
+s
+$ sudo systemctl daemon-reload
+
+$ sudo systemctl start kubelet
+
+$ sudo systemctl kubelet.service
+
+============================================================================================
+
+Step 3: only on master node : 
+
+
+$  sudo kubeadm init
+
+$ mkdir -p $HOME/.kube
+
+$  sudo cp -i /etc/kubernetes/admin.conf $HOME/.kube/config
+
+$ sudo chown $(id -u):$(id -g) $HOME/.kube/config
+
+# after this join our worker nodes in root user :
+
+$  sudo kubeadm join 172.31.2.117:6443 --token u9m86x.8s350qv6ne0g2uqq \
+        --discovery-token-ca-cert-hash sha256:83de95e058889c4d431a02d8b083d3524f30dd8fe193057257ff04698aa9adff
+
+# our worker node joined 
+
+$ kubectl get nodes
+================================================================================================================================
+
+install one more VM for Remote kubectl :
+
+$ curl -LO "https://dl.k8s.io/release/$(curl -L -s https://dl.k8s.io/release/stable.txt)/bin/linux/amd64/kubectl"
+
+$ chmod +x ./kubectl
+
+$ sudo mv ./kubectl /usr/local/bin/kubectl
+
+$ kubectl version
+
+$ mkdir ~/.kube
+
+note: take kube config file from master and keep it here
+
+$ cat ~/.kube/config
+
+# run this in remote machine
+
+$ vi ~/.kube/config
+
+note : take kube config file from master and keep it here
+
+$ kubectl cluster-info
+
+$ kubectl get nodes
+
+$ exit 
+
+# and connect again remote machine
+
+================================================================================================================================
+
+Sample files: javawebapppod.yml
+
+$ vi javawebapppod.yml
+
+
+# 
+---
+apiVersion: v1
+kind: pod
+metadata: 
+  name: javawebapppod
+  labels:
+    app: javawebapp
+spec:
+  containers:
+  - name: javawebappcontainer
+    image: ashokit/javawebapp
+    ports:
+    - containerPort: 8080
+---
+
+$ kubectl get pods
+
+$ kubectl apply -f javawebapppod.yml
+
+$ kubectl describe pod javawebapppod
+
+# check where the pod is running
+
+$ kubectl get pods -o wide
+
+note : we can access the pod across the cluster using pod ID 
+
+$ curl pod-ip:8080
+
+note : we cant access pod using pod id outside of cluster
+
+=========================================================================================================
+
+

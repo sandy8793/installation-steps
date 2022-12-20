@@ -1,0 +1,410 @@
+
+create ec2 instance 
+conncect with ssh client
+
+in mobaxterm :
+# to update all available package 
+
+$sudo yum update -y
+
+# to install docker setip on ec2
+
+$ sudo yum install docker -y
+
+# to start docker service
+
+$ sudo service docker start
+
+# add user to cker group by executing below command
+
+$ sudo usermod -aG docker ec2-user
+
+$docker info
+
+#restart the session
+
+$exit
+
+Restart the session by pressing R on mobaxterm 
+------------------------------------------------------------
+
+# to check docker status 
+
+$ docker info
+
+# to see docker images 
+
+$ docker images
+
+# demo docker images
+
+$ docker pull hello-world
+
+# to run docker images
+
+$ docker run hello-world
+
+----------------------------------------------------------
+
+# to login docker account in ec2
+
+$ docker login 
+( enter login details)
+
+# create new docker file
+
+$ vi dockerfile
+
+ex :
+
+  FROM ubuntu
+  RUN echo "run one"
+  RUN echo "run two"
+  CMD echo "echo from image" 
+  CMD echo "echo fromlatest 
+  RUN echo "run three"
+
+# to build docker images from created file
+
+$ docker build -t dockerfile . 
+
+( . represents current directory)
+
+# to tag docker images to push into docker hub
+
+$ docker tag dockerfile saudagar143/dockerfile
+
+# to push docker hub
+EX:
+
+$ docker push saudagar143/dockerfile
+
+===================================================
+python-flask-docker-app
+===================================================
+
+Dockerfile :
+
+FROM python:3.6
+
+MAINTAINER Ashok Bollepalli "ashokitschool@gmail.com"
+
+COPY . /app
+
+WORKDIR /app
+
+EXPOSE 5000
+
+RUN pip install -r requirements.txt
+
+ENTRYPOINT ["python", "app.py"]
+
+#to clone git repository from git hub
+
+$ git clone https://github.com/ashokitschool/python-flask-docker-app.git
+
+
+: we need to go python-flask-docker-app.git to run next commands
+
+# Build the image using the following command
+
+$ docker build -t simple-flask-app:latest .
+
+# Run the Docker container using the command shown below.
+
+$ docker run -d -p 5000:5000 simple-flask-app
+The application will be accessible at http:127.0.0.1:5000
+
+============================================================================================
+
+#to delete all stop containers
+
+$ docker system prune -a
+
+# to display all running containers
+
+$ docker ps
+
+# stop container
+
+$ docker stop <container ID >
+
+====================================================================================================
+
+Docker Volume commands 
+
+=======================================================================================================
+
+# to display docker volume commands
+
+$ docker volume --help
+
+#create volume
+
+$ docker volume <volume name>
+
+# display docker volume
+
+$ docker volume ls
+
+# inspect the volume
+
+$ docker volume inspect <volume name>
+
+# remove unused volume
+
+$ docker volume prune
+
+# to remove images
+
+$ docker rmi -f saudagar143/simple-flask-app
+==============================================================================================================
+
+Nginx server named mounting volume 
+
+==============================================================================================================
+
+#to pull niginx from docker repo
+
+$ docker pull nginx
+
+$ docker run --name=webapp1 -d -p 80:80 nginx
+
+to change default nginx format go to nginx file  by bash
+
+$ docker exec -it webapp1 bash
+
+# path of nginx 
+
+$ cd /var/share/nginx/html
+
+# edit
+
+$ echo " welcome to ashok it " > index.html
+
+$ docker stop <container id>
+
+# once you stopped container all data will be lost data in nginx
+
+$ docker run --name=webapp2 -d -p 80:80 nginx
+
+$ doker stop <container id>
+
+# then create new volume 
+
+$ docker volume create new-vol
+
+# to move data from one container to another
+
+$ docker run -d --name=webapp20 --mount source=new-vol,destination=/user/share/nginx/html -p 80:80 nginx
+
+$ docker exec -it webapp20 bash
+
+$ cd /var/share/nginx/html
+
+$ echo " welcome to ashok it " > index.html
+
+$ docker stop <container id>
+
+=======================================================================================================================================
+Mount Volume (host directory mounting to docker container
+
+==============================================================================================================
+# create directory in host machine
+
+$ mkdir -p /tmp/nginx/html
+
+# run docker container for nginx image with directory mounting (conatiner name c1)
+
+$ docker run -d -p 80:80 -v /tmp/nginx/html:/usr/share/nginx/html --name c1 nginx:latest
+
+# see the container which are running (c1 should be running)
+
+$ docker container ls
+
+Note: access nginx webserver using host machine public ip
+(it will not displayed bcz index.html not available in conatiner )
+
+# go to mounted directory in host machine
+
+$ cd /tmp/nginx/html
+
+-> create index.file
+
+$ vi index.html
+
+$ cp index.html /tmp/nginx/html
+
+==================================================================================================================
+
+Docker compose 
+
+====================================================================================================================
+
+# create and start containers
+
+$ docker-compose up
+
+# list docker container started by docker compose 
+
+$ docker-compose ps
+
+# stop and remove container
+
+$ docker-compose down
+
+# list down running container images
+
+$ docker-compose images
+
+# using different file
+
+$ docker-compose -f <filename> up
+
+----------------------------------------------------------------------------------------------------------------
+
+Docker compose setup
+
+--------------------------------------------------------------------------------------------------------------------
+
+# docker compose download 
+
+$ sudo curl -SL https://github.com/docker/compose/releases/download/v2.9.0/docker-compose-linux-x86_64 -o /usr/local/bin/docker-compose
+
+# allow permission
+
+$ sudo chmod +x /usr/local/bin/docker-compose
+
+# to check docker compose installed or not
+
+$ docker-compose --version
+
+----------------------------------------------------------------------------------------------------------------
+
+create a docker compose file for setting up dev environment .my sql container is linked with wordpress container
+
+-----------------------------------------------------------------------------------------------------------------------
+
+$ vim docker-compose.yml
+
+---
+services:
+ mydb:
+  environment:
+   MYSQL_ROOT_PASSWORD:ashokit
+  image:"mysql:5"
+ mysite:
+  image:wordpress
+  links:
+   -"mydb:mysql"
+  ports:
+   -"9090:80"
+version:"3"
+---
+
+=================================================================================================
+
+Docker file for spring boot application
+
+===============================================================================================
+Docker file -
+
+---
+FROM openjdk:jdk1.8
+COPY target/sb-app.jar /usr/local/sb-app.jar
+WORKDIR /usr/local/
+EXPOSE 8080
+ENTRYPOINT ["java","-jar","sb-app.jar"]
+---
+
+->if we are using mysql db in spring boot application then we need to mysql db in container
+Note: instead of managing two containers separately we can use docker compose
+
+-------------------------------------------------------------------------------------------------------
+
+Docker compose configuration (docker-compose.yml)
+
+------------------------------------------------------------------------------------------------------
+
+syntax: 
+
+version: "3"
+services:
+ boot-app:
+    image: sb-rest-api
+    ports:
+    -"8080":8080
+    depends_on:
+    - mysql-db
+ 
+ mysql-db:
+    image: mysql:8
+    environment:
+    - MYSQL_ROOT_PASSWORD=root
+    - MYSQL_DATABASE=bootdb
+
+============================================================================================================
+Docker Network
+=============================================================================================================
+
+1- bridge : default
+2- host
+3-none : no connection
+4-overlay : scale up/down 
+5-macvlan : mac adrress
+======================================================================================================================
+Docker network commands
+=====================================================================================================================
+
+# to list all networks
+
+$ docker network ls
+
+# running docker container with default network
+
+$ docker run --name nginx -d -p 80:80 nginx
+
+$ docker inspect nginx
+
+# creating oue own bridge network
+
+$ docker network create --driver bridge my-network
+
+# check 
+
+$ docker network ls
+
+# run the docker container using custom network which we have created 
+
+$ docker run --name nginx20 -d --network my-network -p 7070:80 nginx
+
+# inspect network
+
+$ docker inspect my-network
+
+---------------------------
+# run 2 containers using my-network and check connectivity between 2 containers using ping command 
+
+$ docker run --name nginx30 -d --network my-network -p 8080:80 nginx
+$ docker run --name nginx31 -d --network my-network -p 8080:80 nginx
+
+# to get ip address
+
+$ docker inspect -f '{{range.NetworkSettings.Networks}} {{.IPAddress}}{{end}}' <containerID>
+
+# connect to nginx 30 container and ping nginx 31 container ip
+
+$ docker exec -it nginx30 /bin/bash
+
+$ apt-get install iputils-ping
+
+$ ping < ip address>
+
+========================================================================
+Docker swarm 
+
+==================================================================================
+
+
+
+  

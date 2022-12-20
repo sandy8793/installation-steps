@@ -1,0 +1,71 @@
+++++++++++++++++++java commands ++++++++++++++
+
+for linux : 
+
+
+# to add users in tomcat server path : /conf/tomcat-users.xml
+
+           <role rolename="manager-gui"/>
+          <user username="tomcat" password="tomcat" roles="manager-gui"/>
+           <role rolename="admin-gui"/>
+           <role rolename="manager-script"/>
+           <user username="admin" password="admin" roles="manager-gui,admin-gui,manager-script"/>
+
+==============================================================================================================================
+
+#to install java jdk 8 version 
+
+$sudo yum install java-1.8.0-openjdk
+
+===============================================================================================================================
+
+# To check all available java versions in machine :-
+
+$ sudo update-alternatives --config java
+
+===============================================================================================================================
+
+#to install java setup
+
+$java -version
+
+================================================================================================================================
+
+# To install jenkins software 
+
+$sudo yum install jenkins
+
+# to start jenkins service
+
+$sudo systemctl start jenkins
+
+#to enable jenkins service
+
+$sudo systemctl enable jenkins
+
+#to check jenkins status (enable /Not )
+
+$sudo systemctl status jenkins
+
+#to get initial jenkins admin password 
+
+$ sudo cat /var/lib/jenkins/secrets/initialAdminPassword
+=================================================================================================================================
+
+# while installing jenkins need to install java jdk 11 
+
+$sudo amazon-linux-extras install java-openjdk11
+
+=================================================================================================================================
+
+#sample shell script  code to run
+
+echo "hello guys"
+touch ashokit.txt
+echo "hello guys, welcome to jenkins clsasses" >> ashokit.txt
+echo "done "
+
+==================================================================================================================================
+
+#
+

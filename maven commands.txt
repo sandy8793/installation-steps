@@ -1,0 +1,14 @@
+
+
+- Standlone Maven -
+
+mvn archetype:generate -DgroupId=in.ashokit -DartifactId=01-Maven-App -DarchetypeArtifactId=maven-archetype-quickstart -DinteractiveMode -DinteractiveMode=false
+
+
+-Webapp Maven -
+
+mvn archetype:generate -DgroupId=in.ashokit -DartifactId=01-Maven-web-App -DarchetypeArtifactId=maven-archetype-webapp -DinteractiveMode -DinteractiveMode=false
+
+for dependency maven 
+
+https://github.com/sandy8793/sandy.git   - URL repository (private )

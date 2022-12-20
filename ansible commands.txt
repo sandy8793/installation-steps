@@ -1,0 +1,141 @@
+To create user in ansible ( in EC2 redhat machine)
+
+$ sudo useradd ansible
+$ sudo passwd ansible
+
+$ sudo visudo
+(then edit in file (insert) an in root location copy this command)
+
+ansible ALL=(ALL)NOPASSWD:ALL
+
+$ sudo vi /etc/ssh/sshd_config
+
+(go to INSERT mode & make 
+Comment (#) to password authentication no 
+uncomment (no #) to password authentication yes 
+
+Restart the server 
+$ sudo service sshd restart
+ 
+# after restart Install ansible in Control node 
+
+-> switch to ansible user 
+
+$ sudo su ansible 
+
+-> install python
+
+$ sudo yum install python3 -y
+
+-> check python version
+
+$ python -version
+
+-> update python alternatives 
+
+$ sudo alternatives --set python /usr/bin/python3
+
+-> Install PIP (python package manager )
+
+$ sudo yum install python3-pip -y
+
+-> install ansible using python PIP 
+
+$ pip3 install ansible --user
+
+-> verify ansible version
+
+$ansible --version
+
+-> create ansible folder In /etc
+
+$ sudo mkdir /etc/ansible
+
+-> create ansible.cfg file under /etc/ansible and paste complete content from below get link
+
+open : https://raw.githubusercontent.com/ansible/ansible/devel/examples/ansible.cfg
+copy the content ans paste it in ansible.cfg file with below command 
+
+$ sudo vi /etc/ansible/ansible.cfg
+
+->create host file under /etc/ansible. sample content can in below get link
+
+open : https://raw.githubusercontent.com/ansible/ansible/devel/examples/hosts
+
+$ sudo vi /etc/ansible/hosts
+
+=============with this ansible setup complete =========================
+
+1) update host inventory in ansible server to add host servers details to test connection
+
+$ sudo vi /etc/ansible/hosts
+
+$ connect using username and password
+HOST-NODE-IP ansible_user=ansible ansible_password=password
+
+2) use ping module 
+$ ansible all -m ping
+
+Note : install sshpass in ansible server if you get error like
+
+" to use ssh connection type password , you must install the sshpass
+
+$ sudo yum install sshpass 
+
+$ ansible all -m ping 
+
+Note : this is recommecnded approach for inventory file the secure alternative way down below
+
+================================================================================================
+Generate SSH key in control node and copy SSH key into Host node
+================================================================================================
+1) now generate SSH key in ansible server (control node)
+
+$ sudo su ansible 
+$ ssh-keygen
+
+2) copy it to host server as ansible user 
+
+$ ssh-copy-id ansible@<host-private-ip>
+ex: $ ssh-copy-id ansible@50.19.135.30
+
+Note: repeat below command by updating HOST IP for all HOST servers
+
+3)update Host inventory in ansible server to add host servers details
+
+=======================================================================================================
+create playbook and test in ansible server
+======================================================================================================
+
+# to check playbook valid or not
+
+$ ansible-playbook test.yml --syntax-check
+
+# to run playbook 
+
+$ ansible-playbook test.yml
+
+# to see complete process (exceution & run) 
+
+$ ansible-playbook test.yml -v
+ 
+$ ansible-playbook test.yml -vv
+ 
+$ ansible-playbook test.yml -vvv 
+
+# to check help 
+
+$ ansible-playbook test.yml -help
+
+==============================================================================================================
+
+
+ 
+ 
+
+
+
+
+
+
+
